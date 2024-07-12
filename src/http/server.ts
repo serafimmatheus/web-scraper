@@ -10,13 +10,22 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import { errorHandler } from './error-handler'
-import { getDataLinkedin } from './routes/linkedin/get-data-linkedin'
-import { getAllProductsInShops } from './routes/compare-products/get-all-products-in-shops'
 import { createUser } from './routes/authorization/create-user'
 import { AuthenticateWithPassword } from './routes/authorization/authenticate-with-password'
 import fastifyJwt from '@fastify/jwt'
 import { env } from '../env'
 import { AuthenticateCodeVerify } from './routes/authorization/authenticate-code-verify'
+import { getAllProducts } from './routes/products/get-all-products'
+import { createCategory } from './routes/categories/create-category'
+import { getAllCategories } from './routes/categories/get-categories'
+import { getCategoryBySlug } from './routes/categories/get-category-by-slug'
+import { updateCategoryBySlug } from './routes/categories/update-category-by-slug'
+import { toggleIsActiveCategory } from './routes/categories/toggle-isActive-category'
+import { deleteCategoryBySlug } from './routes/categories/delete-category-by-slug'
+import { createProducts } from './routes/products/create-products'
+import { updateProductsBySlug } from './routes/products/update-product-by-slug'
+import { toggleIsActiveProductsBySlug } from './routes/products/toggle-isActive-Product-by-slug'
+import { deleteProductsBySlug } from './routes/products/delete-product-by-slug'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -25,14 +34,10 @@ app.setValidatorCompiler(validatorCompiler)
 
 app.setErrorHandler(errorHandler)
 
-app.register(fastifyJwt, {
-  secret: env.JWT_SECRET,
-})
-
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Saas Digital',
+      title: 'Cardapio Digital',
       description: 'API Documentation',
       version: '1.0.0',
     },
@@ -54,16 +59,33 @@ app.register(fastifySwaggerUI, {
   routePrefix: '/docs',
 })
 
-app.register(fastifyCors)
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+})
 
-// Register routes LinkedIn
-app.register(getDataLinkedin)
-app.register(getAllProductsInShops)
+app.register(fastifyCors, {
+  origin: '*',
+})
 
 // Register routes Authorization
 app.register(createUser)
 app.register(AuthenticateCodeVerify)
 app.register(AuthenticateWithPassword)
+
+// Register routes Products
+app.register(createProducts)
+app.register(getAllProducts)
+app.register(updateProductsBySlug)
+app.register(toggleIsActiveProductsBySlug)
+app.register(deleteProductsBySlug)
+
+// Register routes Categories
+app.register(createCategory)
+app.register(getAllCategories)
+app.register(getCategoryBySlug)
+app.register(updateCategoryBySlug)
+app.register(toggleIsActiveCategory)
+app.register(deleteCategoryBySlug)
 
 // Start the server
 app
