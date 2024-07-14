@@ -26,6 +26,7 @@ import { createProducts } from './routes/products/create-products'
 import { updateProductsBySlug } from './routes/products/update-product-by-slug'
 import { toggleIsActiveProductsBySlug } from './routes/products/toggle-isActive-Product-by-slug'
 import { deleteProductsBySlug } from './routes/products/delete-product-by-slug'
+import { getProfile } from './routes/authorization/get-profile'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -68,6 +69,7 @@ app.register(fastifyCors, {
 })
 
 // Register routes Authorization
+app.register(getProfile)
 app.register(createUser)
 app.register(AuthenticateCodeVerify)
 app.register(AuthenticateWithPassword)

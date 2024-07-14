@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client'
+import { hash } from 'bcryptjs'
+import { networkInterfaces } from 'os'
 
 const prismaClient = new PrismaClient()
 
@@ -39,6 +41,19 @@ async function createProducts(products: Products[]) {
         categories: {
           connect: product.categories.map((category) => ({ slug: category })),
         },
+      },
+    })
+  }
+}
+
+async function createUsers(data: any) {
+  for (const user of data) {
+    await prismaClient.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: await hash(user.password, 10),
+        image: await user.image,
       },
     })
   }
@@ -171,5 +186,16 @@ const products = [
   },
 ]
 
+const user = [
+  {
+    name: 'Matheus Serafim',
+    email: 'matheus18serafim@gmail.com',
+    password: 'serafim123',
+    image: 'https://github.com/serafimmatheus.png',
+    emailVerified: new Date().toISOString,
+  },
+]
+
 createCategories(categories)
 createProducts(products)
+createUsers(user)
